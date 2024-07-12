@@ -3,9 +3,13 @@ from tkinter import font
 
 MAX_NUM = 12
 
-num1, num2, operator = '', '', ''
+num1, num2, operator = None, None, None
 is_operation = False
 is_result = False
+
+last_button = None
+last_button_bg = None
+last_button_fg = None
 
 
 def get_result():
@@ -53,7 +57,12 @@ def need_to_clear():
 
 
 def click_num_button(num):
+    global last_button
+
     if len(input_.get()) <= MAX_NUM:
+        if last_button is not None:
+            change_button_color(last_button)
+
         need_to_clear()
         input_.insert('end', num)
 
@@ -63,10 +72,12 @@ def click_comma_button():
         input_.insert('end', '.')
 
 
-def click_operation_btn(btn):
+def click_operation_btn(btn_text, button):
     global num1, operator, is_operation
 
-    operator = btn
+    change_button_color(button)
+
+    operator = btn_text
     num1 = input_.get()
     is_operation = True
 
@@ -86,6 +97,21 @@ def click_percent_btn():
     is_operation = True
 
 
+def change_button_color(button):
+    global last_button, last_button_bg, last_button_fg
+
+    # Restore the color of the last pressed button
+    if last_button is not None:
+        last_button.config(background=last_button_bg, foreground=last_button_fg)
+        last_button = None
+    else:
+        last_button = button
+        last_button_bg = button.cget('background')
+        last_button_fg = button.cget('foreground')
+
+        button.config(background=last_button_fg, foreground=last_button_bg)
+
+
 window = tk.Tk()
 window.title('Калькулятор')
 window.geometry("350x550")
@@ -96,9 +122,9 @@ font_for_buttons = font.Font(family='Arial', size=20, weight='normal', slant='ro
 font_for_buttons2 = font.Font(family='Arial', size=20, weight='bold', slant='roman')
 font_for_input = font.Font(family='Arial', size=30, weight='bold', slant='roman')
 
-for c in range(7):
+for c in range(4):
     window.columnconfigure(index=c, weight=1)
-for r in range(4):
+for r in range(7):
     window.rowconfigure(index=r, weight=1)
 
 input_ = tk.Entry(window, width=105, font=font_for_input, justify='right', background='black', foreground='white')
@@ -116,7 +142,7 @@ button_percents = tk.Button(window, text='%', font=font_for_buttons, background=
 button_percents.grid(row=2, column=2, ipadx=20, ipady=20, padx=7, pady=7)
 
 button_div = tk.Button(window, text='÷', font=font_for_buttons, background='gold3', foreground="white",
-                       command=lambda: click_operation_btn('÷'))
+                       command=lambda: click_operation_btn('÷', button_div))
 button_div.grid(row=2, column=3, ipadx=20, ipady=20, padx=7, pady=7)
 
 button_7 = tk.Button(window, text='7', font=font_for_buttons2, background='DarkGray', foreground="white",
@@ -132,7 +158,7 @@ button_9 = tk.Button(window, text='9', font=font_for_buttons2, background='DarkG
 button_9.grid(row=3, column=2, ipadx=20, ipady=20, padx=7, pady=7)
 
 button_mult = tk.Button(window, text='x', font=font_for_buttons, background='gold3', foreground="white",
-                        command=lambda: click_operation_btn('x'))
+                        command=lambda: click_operation_btn('x', button_mult))
 button_mult.grid(row=3, column=3, ipadx=20, ipady=20, padx=7, pady=7)
 
 button_4 = tk.Button(window, text='4', font=font_for_buttons2, background='DarkGray', foreground="white",
@@ -148,7 +174,7 @@ button_6 = tk.Button(window, text='6', font=font_for_buttons2, background='DarkG
 button_6.grid(row=4, column=2, ipadx=20, ipady=20, padx=7, pady=7)
 
 button_minus = tk.Button(window, text='-', font=font_for_buttons, background='gold3', foreground="white",
-                         command=lambda: click_operation_btn('-'))
+                         command=lambda: click_operation_btn('-', button_minus))
 button_minus.grid(row=4, column=3, ipadx=20, ipady=20, padx=7, pady=7)
 
 button_1 = tk.Button(window, text='1', font=font_for_buttons2, background='DarkGray', foreground="white",
@@ -164,7 +190,7 @@ button_3 = tk.Button(window, text='3', font=font_for_buttons2, background='DarkG
 button_3.grid(row=5, column=2, ipadx=20, ipady=20, padx=7, pady=7)
 
 button_plus = tk.Button(window, text='+', font=font_for_buttons, background='gold3', foreground="white",
-                        command=lambda: click_operation_btn('+'))
+                        command=lambda: click_operation_btn('+', button_plus))
 button_plus.grid(row=5, column=3, ipadx=20, ipady=20, padx=7, pady=7)
 
 button_0 = tk.Button(window, text='0', font=font_for_buttons2, background='DarkGray', foreground="white",
