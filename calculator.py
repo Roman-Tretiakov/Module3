@@ -17,21 +17,22 @@ def get_result():
     result = 0
     num2 = input_.get()
 
-    match operator:
-        case '%':
-            result = (float(num2) / 100) * float(num1)
-        case '÷':
-            result = float(num1) / float(num2)
-        case 'x':
-            result = float(num1) * float(num2)
-        case '+':
-            result = float(num1) + float(num2)
-        case '-':
-            result = float(num1) - float(num2)
+    if num1 is not None:
+        match operator:
+            case '%':
+                result = (float(num2) / 100) * float(num1)
+            case '÷':
+                result = float(num1) / float(num2)
+            case 'x':
+                result = float(num1) * float(num2)
+            case '+':
+                result = float(num1) + float(num2)
+            case '-':
+                result = float(num1) - float(num2)
 
-    input_.delete(0, 'end')
-    input_.insert('end', str(result))
-    is_result = True
+        input_.delete(0, 'end')
+        input_.insert('end', str(round(result, 3)))
+        is_result = True
 
 
 def clear_input():
@@ -46,7 +47,7 @@ def click_clear_button():
 def need_to_clear():
     global is_operation, is_result
 
-    if float(input_.get()) == 0.0:
+    if input_.get().startswith('0') and len(input_.get()) == 1:
         clear_input()
     if is_result:
         clear_input()
@@ -68,7 +69,7 @@ def click_num_button(num):
 
 
 def click_comma_button():
-    if float(input_.get()) != 0.0 and not input_.get().endswith('.'):
+    if '.' not in input_.get():
         input_.insert('end', '.')
 
 
